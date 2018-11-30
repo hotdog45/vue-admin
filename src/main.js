@@ -39,21 +39,23 @@ Vue.use(Vuex)
 //NProgress.configure({ showSpinner: false });
 
 const router = new VueRouter({
+  mode: "history",
+  scrollBehavior: () => ({ y: 0 }),
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  //NProgress.start();
-  if (to.path == '/login') {
-    sessionStorage.removeItem('user');
-  }
-  let user = JSON.parse(sessionStorage.getItem('user'));
-  if (!user && to.path != '/login'&& to.path !='/indexPage') {
-    next({ path: '/login' })
-  } else {
-    next()
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   //NProgress.start();
+//   if (to.path == '/login') {
+//     sessionStorage.removeItem('user');
+//   }
+//   let user = JSON.parse(sessionStorage.getItem('user'));
+//   if (!user && to.path != '/login'&& to.path !='/indexPage') {
+//     next({ path: '/login' })
+//   } else {
+//     next()
+//   }
+// })
 
 //router.afterEach(transition => {
 //NProgress.done();

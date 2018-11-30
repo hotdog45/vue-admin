@@ -1,32 +1,50 @@
 import axios from 'axios';
 import qs from 'qs'
 
-let base = '';
+let base = '/api';
 
 let headers = {headers: {"Content-Type": "multipart/form-data"}}
 
-let headers1 = {headers: {'Content-Type':'application/json;'}}
+let headers1 = {headers: {'Content-Type':'application/json;','token':window.localStorage.token}}
+
+//列表
+export const getPluginsGuessList = (page,state,uid,nick_name ) => {
+    return axios.get(`${base}/plugins/guess?page_size=10&page=`+page+`&state=`+state+`&uid=`+uid+`&nick_name=`+nick_name,headers1)
+
+        .then(res => res.data); };
+//审核
+export const postConfirm = (id,params)=> {
+    return axios.post(`${base}/plugins/guess/`+id+'/confirm',params,headers1)
+        .then(res => res.data); };
+
+//删除
+export const deletePluginsGuess = id=> {
+    return axios.delete(`${base}/plugins/guess/`+id,headers1)
+        .then(res => res.data); };
+
+//删除竞猜答案
+export const postAnswer = id => {
+    return axios.post(`${base}/plugins/guess/anwser/`+id,headers1)
+        .then(res => res.data); };
+
+
+
+
+
+
+
+
+
+
+
 
 export const requestLogin = params => { return axios.post(`${base}/api/xcxAdminLogin`, qs.stringify(params)).then(res => res.data); };
-
-
 export const getProvince = params => { return axios.post(`${base}/api/queryProvince`, { params: params }); };
-
-
 export const activities = params => {return axios.post(`${base}/api/activities`, params,headers1)}
-
-
 export const updateActivity =  params => {return axios.post(`${base}/api/updateActivity`, params,headers1)}
-
 export const addActivity =  params => {return axios.post(`${base}/api/addActivity`, params,headers1)}
-
 export const itemONOFF = params => {return axios.post(`${base}/api/itemONOFF`, params,headers1)}
-
-
-
 export const activitiesByTitle = params =>{return axios.post(`${base}/api/activitiesByTitle`, params,headers1)}
-
-
 export const queryAllTags = params =>{return axios.post(`${base}/api/queryAllTags`, params,headers1)}
 
 

@@ -23,14 +23,13 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 8080,
+    port: 8081,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
         '/api': {
-        target: 'http://139.196.79.85:8080/cxwap/',
-        // target: 'http://192.168.2.148:8083/',
+        target: 'http://120.24.212.29:3000/api/v1',
         //设置你调用的接口域名和端口号 别忘了加http
         changeOrigin: true,
         pathRewrite: {
