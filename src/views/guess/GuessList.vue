@@ -3,14 +3,14 @@
 
         <div class="tools">
             <div class="one">
-                <el-button v-if="btnsel =='watting'" size="small" type="primary" @click="state('watting')" plain = 'false'>待审核</el-button>
-                <el-button v-else size="small" @click="state('watting')">待审核</el-button>
-                <el-button v-if="btnsel =='inprogress'" size="small" type="primary" @click="state('inprogress')">进行中</el-button>
-                <el-button v-else size="small" @click="state('inprogress')">进行中</el-button>
-                <el-button v-if="btnsel =='rejected'" size="small" type="primary" @click="state('rejected')">已驳回</el-button>
-                <el-button v-else size="small" @click="state('rejected')">已驳回</el-button>
-                <el-button v-if="btnsel =='success'" size="small" type="primary" @click="state('success')">已结束</el-button>
-                <el-button v-else size="small" @click="state('success')">已结束</el-button>
+                <el-button v-if="btnsel =='waitting'" size="small" type="primary" @click.stop="state('waitting')" plain = 'false'>待审核</el-button>
+                <el-button v-else size="small" @click.stop="state('waitting')">待审核</el-button>
+                <el-button v-if="btnsel =='inprogress'" size="small" type="primary" @click.stop="state('inprogress')">进行中</el-button>
+                <el-button v-else size="small" @click.stop="state('inprogress')">进行中</el-button>
+                <el-button v-if="btnsel =='rejected'" size="small" type="primary" @click.stop="state('rejected')">已驳回</el-button>
+                <el-button v-else size="small" @click.stop="state('rejected')">已驳回</el-button>
+                <el-button v-if="btnsel =='success'" size="small" type="primary" @click.stop="state('success')">已结束</el-button>
+                <el-button v-else size="small" @click.stop="state('success')">已结束</el-button>
                 <div style="flex-grow: 5"></div>
                 <div>芥末号:</div>
                 <el-input class="input" size="small" v-model="account" placeholder="请输入"></el-input>
@@ -38,7 +38,7 @@
         </div>
 
         <div class="list" scoped>
-            <div class="box" v-for="item in data.records">
+            <div class="box" v-for="item in data.records" @click="answerList(item.id)">
                 <div class="left">
                     <div class="imgdiv" style="margin-left: 0;">
                         <img :src="item.image_ori_src">
@@ -49,7 +49,7 @@
                 </div>
                 <div class="right">
 
-                    <div v-if="item.state=='watting'" class="btn1">待审核</div>
+                    <div v-if="item.state=='waitting'" class="btn1">待审核</div>
                     <div v-else-if="item.state=='inprogress'" class="btn1" style="background:orangered">进行中</div>
                     <div v-else-if="item.state=='success'" class="btn1" style="background: #999">已结束</div>
                     <div v-else-if="item.state=='rejected'" class="btn1" style="background: #ccc">已驳回</div>
@@ -63,8 +63,8 @@
                     <div v-if="item.state =='rejected'|| item.state =='success'" @click="deleteGuess(item)" class="btn">
                         删除
                     </div>
-                    <div v-if="item.state=='watting'" class="btn" @click="guessConfirm(true,item)">通过</div>
-                    <div v-if="item.state=='watting'" class="btn" @click="guessConfirm(false,item)">驳回</div>
+                    <div v-if="item.state=='waitting'" class="btn" @click="guessConfirm(true,item)">通过</div>
+                    <div v-if="item.state=='waitting'" class="btn" @click="guessConfirm(false,item)">驳回</div>
                     <!--<div class="btn" @click="guessConfirm(true,item)">通过</div>-->
                     <!--<div class="btn" @click="guessConfirm(false,item)">驳回</div>-->
                 </div>
@@ -73,10 +73,6 @@
 
         <!--工具条-->
         <el-col :span="24" class="toolbar">
-            <!--<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20"-->
-            <!--:page-count="data.pages" style="float:right;">-->
-            <!--</el-pagination>-->
-
             <span class="demonstration">共{{data.total}}条记录 第{{currentPage}}/{{data.pages}}页</span>
             <div style="flex-grow: 5"></div>
             <el-pagination
@@ -89,9 +85,6 @@
             </el-pagination>
         </el-col>
 
-        <div class="pagination">
-
-        </div>
 
     </div>
 </template>
@@ -117,18 +110,41 @@
                 value6: '',
                 account: "",
                 name: "",
+                stateval:'',
             };
         },
 
         methods: {
+
+            answerList(id){
+                window.localStorage.anwserId = id
+                this.$router.push({
+                    path: '/answer',
+                })
+            },
+
             find(){
+//                console.log(this.value6 +"===value6")
+                const times = this.value6 +''
+                var time = times.split(",");
+                if (time.length>1){
+                    this.getList(this.index,this.stateval,this.account,this.name,time[0],time[1])
+                }else {
+                    this.getList(this.index,this.stateval,this.account,this.name)
+                }
 
             },
             reset(){
+                this.value6 = ""
+                this.account = ""
+                this.name = ""
+                this.stateval = ''
                 this.getList(this.index)
+
             },
             state(val){
 
+                this.stateval = val
                 this.getList(this.index,val)
             },
             handleSizeChange(val) {
@@ -233,9 +249,9 @@
 
 
             },
-
-            getList(page,state = '') {
-                getPluginsGuessList(page,state).then(res => {
+//            page,state,uid,nick_name ,start_time,end_time
+            getList(page,state = '',uid = '',nick_name = '',start_time = '',end_time = '') {
+                getPluginsGuessList(page,state,uid,nick_name ,start_time,end_time).then(res => {
                     if (res.code == 200) {
                         this.data = res.data
                     } else {
@@ -248,7 +264,8 @@
 
         //created创建完毕状态
         created() {
-            window.localStorage.token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImlhdCI6MTU0MzM4ODU5OCwiZXhwIjoxNTc0OTI0NTk4fQ.4MdHwDRbSa4eyZn5kbDqxsJS0zmHA94KLQG2O_KzwyM'
+            // window.localStorage.token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImlhdCI6MTU0MzM4ODU5OCwiZXhwIjoxNTc0OTI0NTk4fQ.4MdHwDRbSa4eyZn5kbDqxsJS0zmHA94KLQG2O_KzwyM'
+            window.localStorage.token = this.$route.query.token
             this.getList(1)
         },
 

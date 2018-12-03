@@ -1,20 +1,25 @@
 import axios from 'axios';
 import qs from 'qs'
 
-let base = '/api';
+let base = '/apis/api/v1';
 
 let headers = {headers: {"Content-Type": "multipart/form-data"}}
 
 let headers1 = {headers: {'Content-Type':'application/json;','token':window.localStorage.token}}
 
-//列表
-export const getPluginsGuessList = (page,state,uid,nick_name ) => {
-    return axios.get(`${base}/plugins/guess?page_size=10&page=`+page+`&state=`+state+`&uid=`+uid+`&nick_name=`+nick_name,headers1)
-
+//列表 , end_time
+export const getPluginsGuessList = (page,state,uid,nick_name ,start_time,end_time) => {
+    return axios.get(`${base}/plugins/guess?page_size=10&page=`+page+`&state=`+state+`&uid=`
+        +uid+`&nick_name=`+nick_name+`&start_time=`+start_time+`&end_time=`+end_time,headers1)
         .then(res => res.data); };
 //审核
 export const postConfirm = (id,params)=> {
     return axios.post(`${base}/plugins/guess/`+id+'/confirm',params,headers1)
+        .then(res => res.data); };
+
+//答案列表
+export const getAnswerList = (id,page)=> {
+    return axios.get(`${base}/plugins/guess/`+id+'/anwser?page_size=15&page='+page,headers1)
         .then(res => res.data); };
 
 //删除
@@ -24,7 +29,7 @@ export const deletePluginsGuess = id=> {
 
 //删除竞猜答案
 export const postAnswer = id => {
-    return axios.post(`${base}/plugins/guess/anwser/`+id,headers1)
+    return axios.delete(`${base}/plugins/guess/anwser/`+id,headers1)
         .then(res => res.data); };
 
 
