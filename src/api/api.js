@@ -5,8 +5,8 @@ let base = '/apis/api/v1';
 
 let headers = {headers: {"Content-Type": "multipart/form-data",'token':window.localStorage.token}}
 
-let headers1 = {headers: {'Content-Type':'application/json; charset=utf-8','token':window.localStorage.token}}
-let headers2 = {headers: {"Content-Type": "X-WWW-FORM-URLENCODED",'token':window.localStorage.token}}
+let headers1 = {headers: {'Content-Type':'application/json;charset=utf-8','token':window.localStorage.token}}
+let headers2 = {headers: {"Content-Type": 'application/x-www-form-urlencoded','token':window.localStorage.token}}
 
 //列表 , end_time
 export const getPluginsGuessList = (page,state,uid,nick_name ,start_time,end_time) => {
