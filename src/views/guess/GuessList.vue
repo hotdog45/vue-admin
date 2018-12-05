@@ -60,11 +60,11 @@
                     <div v-if="item.state=='success' && item.correctAttendee" class="btn">
                         {{item.correctAttendee.userInfo.uid}}
                     </div>
-                    <div v-if="item.state =='rejected'|| item.state =='success'" @click="deleteGuess(item)" class="btn">
+                    <div v-if="item.state =='rejected'|| item.state =='success'" @click.stop="deleteGuess(item)" class="btn">
                         删除
                     </div>
-                    <div v-if="item.state=='waitting'" class="btn" @click="guessConfirm(true,item)">通过</div>
-                    <div v-if="item.state=='waitting'" class="btn" @click="guessConfirm(false,item)">驳回</div>
+                    <div v-if="item.state=='waitting'" class="btn" @click.stop="guessConfirm(true,item)">通过</div>
+                    <div v-if="item.state=='waitting'" class="btn" @click.stop="guessConfirm(false,item)">驳回</div>
                     <!--<div class="btn" @click="guessConfirm(true,item)">通过</div>-->
                     <!--<div class="btn" @click="guessConfirm(false,item)">驳回</div>-->
                 </div>
@@ -111,6 +111,8 @@
                 account: "",
                 name: "",
                 stateval:'',
+                time1:"",
+                time2:"",
             };
         },
 
@@ -127,8 +129,11 @@
 //                console.log(this.value6 +"===value6")
                 const times = this.value6 +''
                 var time = times.split(",");
+
                 if (time.length>1){
-                    this.getList(this.index,this.stateval,this.account,this.name,time[0],time[1])
+                    this.time1 = time[0]
+                    this.time2 = time[1]
+                    this.getList(this.index,this.stateval,this.account,this.name,this.time1,this.time2)
                 }else {
                     this.getList(this.index,this.stateval,this.account,this.name)
                 }
@@ -139,13 +144,16 @@
                 this.account = ""
                 this.name = ""
                 this.stateval = ''
+                this.time1= ''
+                this.time2= ''
                 this.getList(this.index)
 
             },
             state(val){
 
                 this.stateval = val
-                this.getList(this.index,val)
+                // this.getList(this.index,val)
+                this.getList(this.index,this.stateval,this.account,this.name,this.time1,this.time2)
             },
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
@@ -153,7 +161,7 @@
             handleCurrentChange: function (val) {
                 console.log(val)
                 this.index = val
-                this.getList(val)
+                this.getList(this.index,this.stateval,this.account,this.name,this.time1,this.time2)
             },
             time(val){
                 return this.$moment(val).format("YYYY-MM-DD HH:mm:ss");
@@ -190,11 +198,11 @@
             },
             guessConfirm(approved, item){
                 var data = {
-                    is_approved: approved
+                    is_approved:approved
                 }
                 var that = this
                 if (approved) {
-                    this.$confirm('你确定要删除吗?', '提示', {
+                    this.$confirm('你确定要通过吗?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -220,7 +228,7 @@
                         });
                     });
                 } else {
-                    this.$confirm('你确定要删除吗?', '提示', {
+                    this.$confirm('你确定要驳回吗?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
