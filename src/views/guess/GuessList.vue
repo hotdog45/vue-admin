@@ -53,7 +53,7 @@
                     <div v-else-if="item.state=='inprogress'" class="btn1" style="background:orangered">进行中</div>
                     <div v-else-if="item.state=='success'" class="btn1" style="background: #999">已结束</div>
                     <div v-else-if="item.state=='rejected'" class="btn1" style="background: #ccc">已驳回</div>
-                    <div v-if="item.state=='inprogress' || item.state=='success'"><span class="btn">{{item.stat ? item.stat.attendee_num : 0}}</span>
+                    <div v-if="item.state=='inprogress' || item.state=='success'"><span class="btn">{{(item.stat && item.stat.attendee_num)  ? item.stat.attendee_num : 0}}</span>
                         人参加
                     </div>
                     <div>答案:{{item.name}}</div>
